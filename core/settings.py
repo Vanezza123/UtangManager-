@@ -135,5 +135,5 @@ STORAGES = {
 # Prevent collectstatic from crashing on warnings (e.g. missing fonts in third-party CSS)
 WHITENOISE_MANIFEST_STRICT = False
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
