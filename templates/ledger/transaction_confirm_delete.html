@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6 col-lg-5">
+    <div class="card p-4 text-center">
+      <div style="width:64px;height:64px;border-radius:20px;background:#fff0f0;border:2px solid #ffc5c5;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">🗑️</div>
+      <div class="section-title mb-2">Delete Transaction?</div>
+      <p style="color:var(--text3);font-size:0.88rem;">You are about to delete this transaction. This cannot be undone.</p>
+      <div class="card mb-3 p-3 text-start" style="background:var(--cream);border-color:var(--border);">
+        <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px;"><strong>Type:</strong> {{ transaction.get_transaction_type_display }}</div>
+        <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px;"><strong>Amount:</strong> <span style="color:#e74c3c;font-weight:700;">₱{{ transaction.amount|floatformat:2 }}</span></div>
+        <div style="font-size:0.85rem;color:var(--text2);margin-bottom:6px;"><strong>Date:</strong> {{ transaction.date|date:"M d, Y g:i A" }}</div>
+        {% if transaction.note %}<div style="font-size:0.85rem;color:var(--text2);"><strong>Note:</strong> {{ transaction.note }}</div>{% endif %}
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 py-2 mb-2" style="border-radius:12px;">Yes, Delete Transaction</button>
+      </form>
+      <a href="{% url 'customer_detail' transaction.customer.pk %}" class="btn btn-outline-secondary w-100">Cancel — Keep Transaction</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-3">
+  <a href="/" style="color:var(--text3);text-decoration:none;font-size:0.85rem;font-weight:500;">← Back to Customers</a>
+</div>
+
+<div class="card mb-4" style="border:1.5px solid rgba(245,166,35,0.25);background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);color:white;overflow:hidden;">
+  <div class="card-body p-4" style="position:relative;">
+    <div style="position:absolute;right:-20px;top:-20px;width:140px;height:140px;background:radial-gradient(circle,rgba(245,166,35,0.15) 0%,transparent 70%);border-radius:50%;"></div>
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div style="width:54px;height:54px;border-radius:16px;background:rgba(245,166,35,0.2);border:2px solid rgba(245,166,35,0.4);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#f5a623;flex-shrink:0;">
+          {{ customer.name|first|upper }}
+        </div>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;">{{ customer.name }}</div>
+          {% if customer.number %}
+            <div style="color:rgba(255,255,255,0.55);font-size:0.85rem;margin-top:2px;">📞 {{ customer.number }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'customer_edit' customer.pk %}" class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:10px;">✏ Edit</a>
+        <a href="{% url 'customer_delete' customer.pk %}" class="btn btn-sm" style="background:rgba(233,69,96,0.2);color:#ff8fa3;border:1px solid rgba(233,69,96,0.3);border-radius:10px;">🗑 Delete</a>
+        <a href="{% url 'transaction_add' customer.pk %}" class="btn btn-sm btn-gold" style="border-radius:10px;">+ Transaction</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-4">
+    <div class="stat-card" style="background:linear-gradient(135deg,#fff8e8,#fffbf2);border:1.5px solid rgba(245,166,35,0.25);">
+      <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px;">Total Utang</div>
+      <div style="font-size:1.3rem;font-weight:800;color:#e74c3c;">₱{{ customer.total_utang|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="stat-card" style="background:linear-gradient(135deg,#f0fff4,#e8f8ee);border:1.5px solid rgba(39,174,96,0.2);">
+      <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px;">Total Paid</div>
+      <div style="font-size:1.3rem;font-weight:800;color:#27ae60;">₱{{ customer.total_paid|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="stat-card" style="background:linear-gradient(135deg,#f0f4ff,#e8ecf8);border:1.5px solid rgba(15,52,96,0.15);">
+      <div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px;">Balance</div>
+      <div style="font-size:1.3rem;font-weight:800;" class="{% if customer.balance > 0 %}text-danger{% else %}text-success{% endif %}">
+        ₱{{ customer.balance|floatformat:2 }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="section-title" style="font-size:1.05rem;">📄 Transactions</div>
+  <a href="{% url 'transaction_add' customer.pk %}" class="btn btn-gold btn-sm px-3">+ Add</a>
+</div>
+
+{% for t in transactions %}
+<div class="card mb-2">
+  <div class="card-body py-3 px-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;{% if t.transaction_type == 'utang' %}background:#fff3cd;{% else %}background:#d1e7dd;{% endif %}">
+          {% if t.transaction_type == 'utang' %}💸{% else %}💰{% endif %}
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="badge-{{ t.transaction_type }}">{{ t.get_transaction_type_display }}</span>
+            <span style="font-weight:800;font-size:1rem;color:var(--text);">₱{{ t.amount|floatformat:2 }}</span>
+          </div>
+          {% if t.note %}
+            <div style="color:var(--text3);font-size:0.8rem;margin-top:2px;">{{ t.note }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div style="text-align:right;">
+          <div style="font-size:0.78rem;color:var(--text3);font-weight:500;">{{ t.date|date:"M d, Y" }}</div>
+          <div style="font-size:0.72rem;color:var(--text3);">{{ t.date|date:"g:i A" }}</div>
+        </div>
+        <a href="{% url 'transaction_edit' t.pk %}" class="btn btn-sm btn-outline-secondary" style="padding:4px 10px;">✏</a>
+        <a href="{% url 'transaction_delete' t.pk %}" class="btn btn-sm" style="background:#fff0f0;border:1px solid #ffc5c5;color:#e74c3c;border-radius:10px;padding:4px 10px;">🗑</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="card text-center py-4">
+  <div class="card-body">
+    <div style="font-size:2.5rem;margin-bottom:8px;">💳</div>
+    <div style="color:var(--text3);font-size:0.88rem;">No transactions yet for this customer.</div>
+    <a href="{% url 'transaction_add' customer.pk %}" class="btn btn-gold btn-sm mt-3 px-4">+ Add First Transaction</a>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

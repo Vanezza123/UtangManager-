@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Audit Log — Utang Manager{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 style="font-family:'Playfair Display',serif; color:#7a6220; margin-bottom:0.5rem;"><i class="bi bi-clock-history me-2"></i>Audit Log</h2>
+</div>
+<div class="card">
+  <div class="card-body p-0">
+    {% if logs %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead>
+          <tr style="background-color: var(--cream);">
+            <th class="ps-3 py-3" style="color: var(--text3); font-size: 0.8rem; text-transform: uppercase;">Date & Time</th>
+            <th style="color: var(--text3); font-size: 0.8rem; text-transform: uppercase;">User</th>
+            <th style="color: var(--text3); font-size: 0.8rem; text-transform: uppercase;">Action</th>
+            <th style="color: var(--text3); font-size: 0.8rem; text-transform: uppercase;">Target</th>
+            <th class="hide-mobile" style="color: var(--text3); font-size: 0.8rem; text-transform: uppercase;">Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td class="ps-3 text-muted small py-3">{{ log.timestamp|date:"M d, Y" }}<br>{{ log.timestamp|date:"h:i A" }}</td>
+            <td class="fw-semibold small" style="color: var(--primary2);">{{ log.user|default:"—" }}</td>
+            <td>
+              {% if log.action == 'create' %}
+                <span class="badge-payment" style="font-size:0.75rem;">Created</span>
+              {% elif log.action == 'edit' %}
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1" style="border-radius:6px; font-size:0.75rem;">Edited</span>
+              {% else %}
+                <span class="badge-utang" style="font-size:0.75rem;">Deleted</span>
+              {% endif %}
+            </td>
+            <td class="small fw-bold">{{ log.target }}</td>
+            <td class="hide-mobile text-muted small">{{ log.detail|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if logs.has_other_pages %}
+    <div class="d-flex justify-content-center py-3">
+      <ul class="pagination pagination-sm mb-0">
+        {% if logs.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ logs.previous_page_number }}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+        <li class="page-item disabled"><span class="page-link">{{ logs.number }} / {{ logs.paginator.num_pages }}</span></li>
+        {% if logs.has_next %}<li class="page-item"><a class="page-link" href="?page={{ logs.next_page_number }}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+      </ul>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="text-center py-5 text-muted"><i class="bi bi-clock-history fs-1 d-block mb-2"></i>No audit logs yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

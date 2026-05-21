@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Change PIN — Utang Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card p-4">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔐</div>
+        <div>
+          <h4 class="mb-0 fw-bold" style="font-family:'Playfair Display',serif; color:#7a6220;">Change PIN</h4>
+          <div style="font-size:0.78rem;color:var(--text3);">PIN is used to recover password if forgotten.</div>
+        </div>
+      </div>
+      <hr style="border-color:var(--border);margin-bottom:20px;">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div style="padding:0.7rem 1rem; margin-bottom:1.25rem; border-radius:3px;
+            {% if message.tags == 'error' %}background:#fdf2f2; border-left:3px solid #c0392b; color:#c0392b;
+            {% else %}background:#f0fff4; border-left:3px solid #27ae60; color:#27ae60;{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if profile.pin %}
+        <div style="background:#fef9e7; border-left:3px solid #c9a84c; color:#7a6220; padding:0.7rem 1rem; border-radius:0 3px 3px 0; margin-bottom:1.5rem; font-size:0.88rem;">
+          ✅ A PIN is already set for your account.
+          {% if profile.pin_hint %}<br><em>Your current hint: "{{ profile.pin_hint }}"</em>{% endif %}
+        </div>
+      {% else %}
+        <div style="background:#fdf2f2; border-left:3px solid #c0392b; color:#c0392b; padding:0.7rem 1rem; border-radius:0 3px 3px 0; margin-bottom:1.5rem; font-size:0.88rem;">
+          ⚠️ No PIN set yet. Set one now so you can recover your password.
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold" style="color:#7a6220; font-size:0.85rem;">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <div class="form-text text-muted" style="font-size:0.75rem;">{{ field.help_text }}</div>
+            {% endif %}
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <div style="color:var(--accent);font-size:0.82rem;margin-top:6px;font-weight:600;">⚠ {{ error }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-primary px-4">Save PIN</button>
+          <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

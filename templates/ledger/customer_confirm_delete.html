@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6 col-lg-5">
+    <div class="card p-4 text-center">
+      <div style="width:64px;height:64px;border-radius:20px;background:#fff0f0;border:2px solid #ffc5c5;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">⚠️</div>
+      <div class="section-title mb-2">Delete Customer?</div>
+      <p style="color:var(--text3);font-size:0.88rem;line-height:1.6;">
+        You are about to permanently delete <strong style="color:var(--text);">{{ customer.name }}</strong> and <strong style="color:#e74c3c;">ALL their transactions</strong>. This cannot be undone.
+      </p>
+      <hr style="border-color:var(--border);">
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 py-2 mb-2" style="border-radius:12px;">Yes, Delete Customer</button>
+      </form>
+      <a href="{% url 'customer_detail' customer.pk %}" class="btn btn-outline-secondary w-100">Cancel — Keep Customer</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

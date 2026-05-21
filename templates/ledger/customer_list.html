@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="welcome-banner">
+  <svg class="banner-deco-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="80" height="80" rx="18" fill="white"/>
+    <rect x="20" y="16" width="32" height="42" rx="3" fill="#0f3460"/>
+    <rect x="26" y="24" width="20" height="3" rx="1.5" fill="white"/>
+    <rect x="26" y="31" width="16" height="3" rx="1.5" fill="white" opacity="0.6"/>
+    <rect x="26" y="38" width="18" height="3" rx="1.5" fill="white" opacity="0.4"/>
+    <rect x="14" y="16" width="6" height="42" rx="3" fill="#f5a623"/>
+  </svg>
+  <div class="greeting">✦ UtangManager — Digital Ledger</div>
+  <h2 id="greeting-text">Good Day, Seller!</h2>
+  <p id="motivation-text">Track every peso. Stay on top of your business!</p>
+  <div class="badge-time" id="time-text">Loading...</div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <div class="section-title">👥 Customers</div>
+    <div style="font-size:0.8rem;color:var(--text3);margin-top:2px;">{{ customers|length }} record{{ customers|length|pluralize }}</div>
+  </div>
+  <a href="{% url 'customer_add' %}" class="btn btn-gold px-4">+ Add Customer</a>
+</div>
+
+<form method="get" class="mb-4">
+  <div style="position:relative;">
+    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);">🔍</span>
+    <input class="form-control" style="padding-left:40px;border-radius:14px;" name="q" value="{{ q }}" placeholder="Search by name or number..." autocomplete="off">
+  </div>
+</form>
+
+{% for c in customers %}
+<div class="card mb-2 customer-row" onclick="window.location='{% url 'customer_detail' c.pk %}'">
+  <div class="card-body d-flex justify-content-between align-items-center py-3 px-4">
+    <div class="d-flex align-items-center gap-3">
+      <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#1a1a2e,#0f3460);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1rem;flex-shrink:0;">
+        {{ c.name|first|upper }}
+      </div>
+      <div>
+        <div class="fw-bold" style="color:var(--text);font-size:0.97rem;">{{ c.name }}</div>
+        {% if c.number %}
+          <small style="color:var(--text3);">📞 {{ c.number }}</small>
+        {% else %}
+          <small style="color:var(--text3);">No number on file</small>
+        {% endif %}
+      </div>
+    </div>
+    <div class="text-end">
+      <div class="fw-bold fs-5 {% if c.balance > 0 %}text-danger{% else %}text-success{% endif %}">
+        ₱{{ c.balance|floatformat:2 }}
+      </div>
+      <small style="font-size:0.72rem;font-weight:600;">
+        {% if c.balance > 0 %}<span style="color:#e74c3c;">● May Utang</span>
+        {% else %}<span style="color:#27ae60;">✓ Fully Paid</span>{% endif %}
+      </small>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="card text-center py-5 mt-2">
+  <div class="card-body">
+    <div style="font-size:3.5rem;margin-bottom:12px;">📋</div>
+    <div class="section-title mb-2">No customers yet</div>
+    <p style="color:var(--text3);font-size:0.88rem;">Start adding your customers to track their utang and payments.</p>
+    <a href="{% url 'customer_add' %}" class="btn btn-gold mt-2 px-4">+ Add First Customer</a>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
